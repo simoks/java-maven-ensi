@@ -4,7 +4,7 @@ public class Hello {
 	
 	public static void main(String[] args)
     {
-        System.out.println("Hello DevOps & Cloud Computing, Today is Monday");
+        System.out.println("Hello DevOps, Today is Monday");
     }
 
 }
