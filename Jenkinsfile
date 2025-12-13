@@ -28,7 +28,7 @@ pipeline {
                     // Navigate to the directory containing the Maven project 
                     dir('java-maven/maven') { 
                     // Run Maven commands 
-                    sh 'mvn clean test package'
+                        sh 'mvn clean test package'
                     }
                 }
             }
@@ -37,7 +37,10 @@ pipeline {
             steps {
                 script {
                     // Exécuter le jar généré
-                    sh 'java -jar target/maven-0.0.1-SNAPSHOT.jar'
+                    dir('java-maven/maven') { 
+                    // Run Maven commands 
+                        sh 'java -jar target/maven-0.0.1-SNAPSHOT.jar'
+                    }
                 }
             }
         }
