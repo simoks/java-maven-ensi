@@ -25,8 +25,11 @@ pipeline {
                 script {
                     echo "Current directory: ${pwd()}"
                     
-                    // Run Maven commands à la racine du repo
+                    // Navigate to the directory containing the Maven project 
+                    dir('java-maven/maven') { 
+                    // Run Maven commands 
                     sh 'mvn clean test package'
+                    }
                 }
             }
         }
