@@ -33,6 +33,16 @@ pipeline {
                 }
             }
         }
+        stage('Dependency-Check') {
+            steps {
+                sh 'mvn org.owasp:dependency-check-maven:check'
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'target/dependency-check-report.html', allowEmptyArchive: true
+                }
+            }
+        }
         stage('Run') {
             steps {
                 script {
