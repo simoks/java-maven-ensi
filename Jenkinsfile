@@ -4,7 +4,8 @@ docker {
 // Image contenant Maven et Git
 image 'my-maven-git:latest'
 // Pour réutiliser le cache Maven local entre builds
-args '-v $HOME/.m2:/root/.m2'
+//args '-v $HOME/.m2:/root/.m2'
+args '-v maven-repo:/root/.m2'
 }
 }
 stages {
