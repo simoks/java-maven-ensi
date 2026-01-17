@@ -1,61 +1,36 @@
 pipeline {
-    agent {
-        docker {
-            image 'my-maven-git:latest'
-            // Utiliser un volume Docker pour Maven plutôt que $HOME
-            args '-v maven-repo:/root/.m2'
-        }
-    }
-    options {
-        // Supprime le workspace automatiquement avant chaque build
-        skipDefaultCheckout(false)
-    }
-    stages {
-        stage('Checkout') {
-            steps {
-                // Nettoyer le workspace proprement
-                deleteDir()
-                
-                // Checkout avec les credentials Jenkins configurés
-                checkout scm
-            }
-        }
-        stage('Build & Test') {
-            steps {
-                script {
-                    echo "Current directory: ${pwd()}"
-                    
-                    // Navigate to the directory containing the Maven project 
-                    dir('maven') { 
-                    // Run Maven commands 
-                        sh 'mvn clean test package'
-                    }
-                }
-            }
-        }
-        stage('Dependency-Check') {
-            steps {
-                dir('maven') { 
-                    // Run Maven commands 
-                        sh 'mvn org.owasp:dependency-check-maven:check'
-                    }
-            }
-            post {
-                always {
-                    archiveArtifacts artifacts: 'target/dependency-check-report.html', allowEmptyArchive: true
-                }
-            }
-        }
-        stage('Run') {
-            steps {
-                script {
-                    // Exécuter le jar généré
-                    dir('maven') { 
-                    // Run Maven commands 
-                        sh 'java -jar target/maven-0.0.1-SNAPSHOT.jar'
-                    }
-                }
-            }
-        }
-    }
+agent {
+docker {
+// Image contenant Maven et Git
+image 'my-maven-git:latest'
+// Pour réutiliser le cache Maven local entre builds
+args '
+-v $HOME/.m2:/root/.m2'
+}
+}
+stages {
+stage('Checkout') {
+steps {
+// clean the directory
+sh "rm -rf *"
+// Checkout the Git repository
+sh "git clone https://github.com/simoks/java-maven.git"
+}
+}
+stage('Build') {
+steps {
+script {
+// Here, we can can run Maven commands
+def currentDir = pwd()
+echo "Current directory: ${currentDir}"
+// Navigate to the directory containing the Maven project
+dir('java-maven/maven') {
+// Run Maven commands
+sh 'mvn clean test package'
+sh "java -jar target/maven-0.0.1-SNAPSHOT.jar"
+}
+}
+}
+}
+}
 }
